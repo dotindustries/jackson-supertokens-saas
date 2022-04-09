@@ -1,0 +1,13 @@
+{
+  "name": "@app/config",
+  "main": "src/index.ts",
+  "dependencies": {
+    "magic-sdk": "^8.0.1",
+    "supertokens-auth-react": "^0.20.3",
+    "react-icons": "^4.3.1",
+    "@saas-ui/auth": "*",
+    "@saas-ui/react": "*",
+    "@saas-ui/pro": "*",
+    "@ui/core": "*"
+  }
+}

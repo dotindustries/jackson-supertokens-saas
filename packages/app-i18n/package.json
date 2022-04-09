@@ -1,0 +1,20 @@
+{
+  "name": "@app/i18n",
+  "main": "src/index",
+  "private": true,
+  "scripts": {
+    "extract": "formatjs extract",
+    "compile": "formatjs compile",
+    "extract-compile": "formatjs extract '../**/src/**/*.ts*' --out-file temp.json --flatten --id-interpolation-pattern '[sha512:contenthash:base64:6]' && formatjs compile 'temp.json' --out-file lang/en.json && rm temp.json"
+  },
+  "dependencies": {
+    "formatjs": "^0.1.1",
+    "@tolgee/react": "^4.4.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.6",
+    "next": "12.1.4",
+    "supertokens-auth-react": "^0.20.3",
+    "@saas-ui/react": "*"
+  }
+}

@@ -1,14 +1,18 @@
 {
   "name": "jackson-supertokens-saas",
   "version": "0.1.0",
+  "description": "SaaS web app template based on SAML+SuperTokens+SaaS-UI",
+  "repository": "git@github.com:dotindustries/jackson-supertokens-saas.git",
+  "author": "Janos Veres <janos@dot.industries>",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "docker-compose -f ./docker-compose.yml up --build",
+    "dev": "docker-compose -f ./docker-compose-dev.yml up --build",
     "up": "docker-compose -f ./docker-compose.yml up -d --build",
     "down": "docker-compose -f ./docker-compose.yml down --volumes --remove-orphans"
   },
-  "dependencies": {
-  },
-  "devDependencies": {
-  }
+  "packageManager": "npm"
 }

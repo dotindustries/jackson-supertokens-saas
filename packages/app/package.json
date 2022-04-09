@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "1.0.1",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@app/config": "*",
+    "@app/i18n": "*",
+    "@ui/theme": "*",
+    "yup": "^0.32.11",
+    "@trpc/server": "^9.22.0",
+    "@trpc/client": "^9.22.0",
+    "@trpc/react": "^9.22.0",
+    "react-query": "^3.34.19",
+    "zod": "^3.14.4"
+  },
+  "peerDependencies": {
+    "@saas-ui/billing": "*",
+    "@saas-ui/charts": "*",
+    "@saas-ui/onboarding": "*",
+    "@saas-ui/pro": "*",
+    "@saas-ui/react": "*",
+    "react": ">=16.8.6"
+  }
+}

@@ -58,21 +58,5 @@ services:
     networks:
       - supertokens
 
-  app:
-    build:
-      context: ./apps/web
-      dockerfile: Dockerfile
-    restart: always
-    environment:
-      - DOCKER=1
-    volumes:
-      - ./apps/web:/app
-      - /app/node_modules
-      - /app/.next
-    ports:
-      - 3000:3000
-    networks:
-      - supertokens
-
 networks:
   supertokens:
