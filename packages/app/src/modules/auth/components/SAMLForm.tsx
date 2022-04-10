@@ -58,8 +58,7 @@ export const SAMLForm: React.FC<SAMLFormProps> = ({
   }
 
   if (isRejected) {
-    onError(error)
-    return <></>
+    return <p>{error?.message}</p>
   }
 
   return (

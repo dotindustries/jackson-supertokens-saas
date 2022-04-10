@@ -3,7 +3,7 @@ import {createRouter} from '@server/createRouter'
 import {getOrgAuthUrl} from '@server/auth'
 
 export const publicRouter = createRouter()
-  .mutation('orgExists', {
+  .query('orgExists', {
     input: z.object({
       domain: z.string()
     }),

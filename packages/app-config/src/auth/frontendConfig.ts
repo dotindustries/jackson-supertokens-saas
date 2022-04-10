@@ -13,11 +13,13 @@ export const frontendConfig = () => ({
         if (action === 'GET_AUTHORISATION_URL') {
           url.searchParams.append('tenant', 'boxyhq.com')
           url.searchParams.append('product', 'supertokens')
+          console.log('get_authorisation_url preAPIHook called and appended params', url)
         }
 
         if (action === 'THIRD_PARTY_SIGN_IN_UP') {
           url.searchParams.append('tenant', 'boxyhq.com')
           url.searchParams.append('product', 'supertokens')
+          console.log('third_party_sign_in_up preAPIHook called and appended params', url)
         }
 
         return {
