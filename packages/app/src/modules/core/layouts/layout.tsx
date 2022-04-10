@@ -27,7 +27,6 @@ export const Authenticated: React.FC = ({children, ...rest}) => {
 
   const code = new URL(window.location.href).searchParams.get('code')
   if (!isInitializing && !isAuthenticated && code === null) {
-    console.log('redirecting to login', isInitializing, isAuthenticated, code)
     router.push(view)
     return <></>
     // disable built-in views

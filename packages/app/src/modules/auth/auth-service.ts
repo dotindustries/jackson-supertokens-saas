@@ -39,9 +39,9 @@ const supertokens = (client: {
       if (await client.sessionRecipe.doesSessionExist()) {
         const accessTokenPayload =
           await client.sessionRecipe.getAccessTokenPayloadSecurely()
-        const jwtPropertyName = accessTokenPayload['_jwtPName']
-        console.log('returning token', accessTokenPayload)
-        return accessTokenPayload[jwtPropertyName]
+        // IF we would ever need to return the access token, we need to expose it first in supertokens then:
+        // const jwtPropertyName = accessTokenPayload['_jwtPName']
+        return accessTokenPayload // accessTokenPayload[jwtPropertyName]
       } else {
         console.log('no session')
         return undefined
@@ -60,7 +60,6 @@ const supertokens = (client: {
       }
     },
     onLogin: async (params: AuthParams, options: AuthOptions | undefined): Promise<User | undefined | null> => {
-      console.log('onLogin called', params, options)
       if (!params.email && !params.otp) {
         throw new Error(`invalid login parameters`)
       }
@@ -69,6 +68,11 @@ const supertokens = (client: {
         // otp logic
       }
 
+      if (params.provider) {
+        // oidc logic
+      }
+
+      // Jackson SAML logic
       if (params.email) {
         if (!params.password) {
           const tenant = params.email.split('@')[1]
