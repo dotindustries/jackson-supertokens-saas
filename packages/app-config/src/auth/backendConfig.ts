@@ -5,7 +5,7 @@ import axios from 'axios'
 import { appInfo } from './appInfo'
 
 const connectionURI = process.env.DOCKER ? 'http://supertoken:3567' : 'http://localhost:3567'
-const jacksonApiUrl = process.env.DOCKER ? 'http://jackson:5225' : 'http://localhost:3567'
+export const jacksonApiUrl = process.env.DOCKER ? 'http://jackson:5225' : 'http://localhost:5225'
 const jacksonAuthUrl = 'http://localhost:5225'
 
 

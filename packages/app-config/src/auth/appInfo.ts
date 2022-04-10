@@ -1,9 +1,10 @@
+export const samlProduct = 'supertokens'
+
 export const appInfo = {
-  appName: 'SAML Jackson + SuperTokens',
+  appName: 'SAML Jackson + SuperTokens + SaaS-UI',
   apiBasePath: '/api/auth',
   apiDomain: getApiDomain(),
-  websiteDomain: getWebsiteDomain(),
-  websiteBasePath: "/auth"
+  websiteDomain: getWebsiteDomain()
 }
 
 export function getApiDomain() {

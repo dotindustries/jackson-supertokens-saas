@@ -2,6 +2,19 @@ import { HotkeysListOptions } from '@saas-ui/react'
 
 import { platformSelect } from '@saas-ui/pro'
 
+const modifiers = {
+  '⌥': 'alt',
+  option: 'alt',
+  '⇧': 'shift',
+  '⌃': 'control',
+  ctrl: 'control',
+  '⌘': 'meta',
+  cmd: 'meta',
+  command: 'meta',
+  mod: 'meta', // ios
+  esc: 'escape',
+}
+
 export const appHotkeys: HotkeysListOptions = {
   general: {
     title: 'General',
@@ -16,7 +29,7 @@ export const appHotkeys: HotkeysListOptions = {
       },
       logout: {
         label: 'Log out',
-        command: platformSelect({ mac: '⌥ ⇧ Q' }, 'Ctrl+Shift+Q'),
+        command: platformSelect({ mac: `${modifiers['⌥']} ${modifiers['⇧']} Q` }, 'Ctrl+Shift+Q'),
       }
     },
   },

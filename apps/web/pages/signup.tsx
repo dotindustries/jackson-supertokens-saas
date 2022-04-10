@@ -6,7 +6,7 @@ import {SignupPage} from '@modules/auth'
 
 export default createPage({
   title: 'Signup',
-  // isPublic: true,
+  isPublic: true,
   renderComponent: () => {
     const router = useRouter()
     const { isAuthenticated } = useAuth()

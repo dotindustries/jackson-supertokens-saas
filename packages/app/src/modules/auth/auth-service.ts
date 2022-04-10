@@ -1,6 +1,9 @@
 import {AuthOptions, AuthParams, AuthProviderProps, AuthToken, User} from '@saas-ui/auth'
 import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword'
 import Session from 'supertokens-auth-react/recipe/session'
+import {getOrgAuthUrl} from 'app/src/server/auth'
+import {trpc} from '@modules/utils/trpc'
+import {appRouter} from '@server/routers/_app'
 
 export const createSupertokensAuthService = (): AuthProviderProps => {
   return supertokens({
@@ -25,7 +28,6 @@ const supertokens = (client: {
   sessionRecipe: SessionRecipe
 }): AuthProviderProps => ({
   onGetToken: async (): Promise<AuthToken> => {
-    console.log('onGetToken called')
     if (await client.sessionRecipe.doesSessionExist()) {
       const accessTokenPayload =
         await client.sessionRecipe.getAccessTokenPayloadSecurely()
@@ -49,9 +51,27 @@ const supertokens = (client: {
       return null
     }
   },
-  onLogin(params: AuthParams, options: AuthOptions | undefined): Promise<User | undefined | null> {
+  onLogin: async (params: AuthParams, options: AuthOptions | undefined): Promise<User | undefined | null> => {
+    const trpcClient = trpc.createClient({url: 'http://localhost:3000/api/trpc'})
     console.log('onLogin called', params, options)
-    return Promise.resolve(undefined)
+    if (!params.email && !params.otp) {
+      throw new Error(`invalid login parameters`)
+    }
+
+    if (params.otp) {
+      // otp logic
+    }
+
+    if (params.email) {
+      if (!params.password) {
+        const tenant = params.email.split('@')[1]
+        const orgAuthUrl = await trpcClient.mutation('public.orgExists',{domain: tenant}, {})
+        // const orgAuthUrl = await getOrgAuthUrl(tenant)
+        console.log(`found company: ${orgAuthUrl}`)
+
+      }
+    }
+    return undefined
   },
   onLogout(options: AuthOptions | undefined): Promise<void> {
     console.log('onLogout called', options)

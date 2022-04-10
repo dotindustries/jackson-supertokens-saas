@@ -11,7 +11,8 @@
     "@trpc/client": "^9.22.0",
     "@trpc/react": "^9.22.0",
     "react-query": "^3.34.19",
-    "zod": "^3.14.4"
+    "zod": "^3.14.4",
+    "axios": "^0.26.1"
   },
   "peerDependencies": {
     "@saas-ui/billing": "*",

@@ -1,4 +1,4 @@
-import { Container, Stack } from '@chakra-ui/react'
+import {Container, Stack, Text} from '@chakra-ui/react'
 import { Link } from '@modules/core/components/link'
 
 import { Loader, SignupView, useAuth } from '@saas-ui/react'
@@ -25,7 +25,9 @@ export const SignupPage = () => {
 
         <Link href="/login">Already have an account? Log in.</Link>
       </Stack>
-      <Stack flex="1" bg="primary.500"></Stack>
+      <Stack flex="1" bg="primary.500" alignItems="center" justify="center">
+        <Text>Fancy logo picture thing</Text>
+      </Stack>
     </Stack>
   )
 }

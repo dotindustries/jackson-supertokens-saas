@@ -12,6 +12,7 @@ export const index: React.FC<indexProps> = ({}) => {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
+      // FIXME this is never called, because of the outer auth wrapper?
       router.push('/login')
     }
 
@@ -23,9 +24,9 @@ export const index: React.FC<indexProps> = ({}) => {
       router.push('/home')
     }
 
-
   }, [isLoggingIn, isLoading, isAuthenticated])
 
+  console.log('showing loader on index')
   return <Loader />
 }
 

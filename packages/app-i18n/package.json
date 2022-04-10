@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "formatjs": "^0.1.1",
-    "@tolgee/react": "^4.4.0"
+    "@tolgee/react": "^4.4.0",
+    "@tolgee/ui": "^4.4.0"
   },
   "peerDependencies": {
     "react": ">=16.8.6",

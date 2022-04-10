@@ -1,9 +1,9 @@
-import { superTokensNextWrapper } from 'supertokens-node/nextjs'
-import { middleware } from 'supertokens-node/framework/express'
-import { NextApiRequest, NextApiResponse } from 'next'
-import { Request, Response } from 'express';
+import {superTokensNextWrapper} from 'supertokens-node/nextjs'
+import {middleware} from 'supertokens-node/framework/express'
+import {NextApiRequest, NextApiResponse} from 'next'
+import {Request, Response} from 'express'
 import supertokens from 'supertokens-node'
-import { backendConfig } from '../../../config/backendConfig'
+import {backendConfig} from '@app/config/auth/backendConfig'
 
 supertokens.init(backendConfig())
 
