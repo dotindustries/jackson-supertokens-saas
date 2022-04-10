@@ -44,26 +44,21 @@ export interface SAMLTenantConfig {
   certs: SSL
 }
 
-export const getOrgAuthUrl = async (tenantDomain: string): Promise<string | undefined> => {
-  const redirectURI = getRedirectURI()
-
+export const domainSSOConfigExists = async (tenantDomain: string) => {
   const params = encodeURI(`tenant=${tenantDomain}&product=${samlProduct}`)
 
-  let config: AxiosResponse<SAMLTenantConfig>
+  let exists = false
   try {
-    console.log(`asking Jackson for existing organization: ${tenantDomain}`)
-    config = await axios({
-      method: 'get',
-      url: `${jacksonApiUrl}/api/v1/saml/config?${params}`,
-      headers: {
-        Authorization: `Bearer ${'access_token'}`
-      }
-    })
+    const config = await axios.get<SAMLTenantConfig>(`${jacksonApiUrl}/api/v1/saml/config?${params}`, {headers: {
+        // FIXME load jackson static access token from env var
+        Authorization: `Bearer ${'secret'}`
+      }})
+    exists = config.status === 200 && config.data && typeof config.data.tenant !== 'undefined'
   } catch (e) {
-    throw new OrganizationNotFound(`not found: ${tenantDomain}`)
+    console.error(e, 'failed to ask Jackson for domain SSO config')
   }
 
-  return config.data.idpMetadata.sso.redirectUrl
+  return exists
 }
 
 export const sendMagicLink = async (email: string) => {

@@ -32,6 +32,7 @@ export const LoginPage = () => {
           {companyNotFound
             ? null
             : <SAMLForm action="logIn" submitLabel={t('auth.login_button')} onError={e => {
+              console.error(e)
               setCompanyNotFound(true)
             }}/>}
           {!companyNotFound

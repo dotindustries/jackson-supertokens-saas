@@ -9,6 +9,7 @@ import {createSupertokensAuthService} from '@modules/auth/auth-service'
 import {AppRouter} from '@server/routers/_app'
 import {withTRPC} from '@trpc/next'
 import {TRPCError} from '@trpc/server'
+import {getTrpcBaseUrl} from '@modules/utils/trpc'
 
 if (typeof window !== 'undefined') {
   SuperTokensReact.init(frontendConfig())
@@ -50,17 +51,10 @@ const App: React.FC<AppProps> = ({Component, pageProps}) => {
   )
 }
 
-const getBaseUrl = () => {
-  if (process.browser) return '/api/trpc' // Browser should use current path
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}/api/trpc` // SSR should use vercel url
-
-  return `http://localhost:${process.env.PORT ?? 3000}/api/trpc` // dev SSR should use localhost
-}
-
 export default withTRPC<AppRouter>({
   config() {
     return {
-      url: getBaseUrl(),
+      url: getTrpcBaseUrl(),
       // transformer,
       queryClientConfig: {
         defaultOptions: {

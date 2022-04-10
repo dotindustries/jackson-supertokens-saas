@@ -2,6 +2,10 @@ import * as trpc from '@trpc/server'
 import * as trpcNext from '@trpc/server/adapters/next'
 import {superTokensNextWrapper} from 'supertokens-node/nextjs'
 import {verifySession} from 'supertokens-node/lib/build/recipe/session/framework/express'
+import supertokens from 'supertokens-node'
+import {backendConfig} from '@app/config/auth/backendConfig'
+
+supertokens.init(backendConfig())
 
 interface Organization {
   id: string

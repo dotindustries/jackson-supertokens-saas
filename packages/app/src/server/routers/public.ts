@@ -1,21 +1,13 @@
 import { z } from 'zod'
 import {createRouter} from '@server/createRouter'
-import {getOrgAuthUrl} from '@server/auth'
+import {domainSSOConfigExists} from '@server/auth'
 
 export const publicRouter = createRouter()
-  .query('orgExists', {
+  .query('ssoConfigExists', {
     input: z.object({
       domain: z.string()
     }),
-    resolve({input, ctx}) {
-      return getOrgAuthUrl(input.domain)
+    resolve({input}) {
+      return domainSSOConfigExists(input.domain)
     }
   })
-  // .mutation('magicLink', {
-  //   input: z.object({
-  //     email: z.string()
-  //   }),
-  //   resolve({ input }) {
-  //     return sendMagicLink(input.email)
-  //   }
-  // })

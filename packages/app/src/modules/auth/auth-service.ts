@@ -2,7 +2,12 @@ import {AuthOptions, AuthParams, AuthProviderProps, AuthToken, User} from '@saas
 import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword'
 import Session from 'supertokens-auth-react/recipe/session'
 import {createTRPCClient} from '@trpc/client'
+import axios from 'axios'
+import {v4 as uuidv4} from 'uuid'
 import type {AppRouter} from '@server/routers/_app'
+import {getAuthBaseUrl} from '@modules/utils/auth'
+import {getTrpcBaseUrl} from '@modules/utils/trpc'
+import {samlProduct} from '@app/config/auth/appInfo'
 
 export const createSupertokensAuthService = (): AuthProviderProps => {
   return supertokens({
@@ -27,7 +32,7 @@ const supertokens = (client: {
   sessionRecipe: SessionRecipe
 }): AuthProviderProps => {
   const trpcClient = createTRPCClient<AppRouter>({
-    url: 'http://localhost:3000/api/trpc'
+    url: getTrpcBaseUrl()
   })
   return ({
     onGetToken: async (): Promise<AuthToken> => {
@@ -68,14 +73,59 @@ const supertokens = (client: {
         if (!params.password) {
           const tenant = params.email.split('@')[1]
           const orgExists = await Promise.race([
-            trpcClient.query('public.orgExists', {domain: tenant}),
-            new Promise(resolve => setTimeout(resolve, 500))
+            trpcClient.query('public.ssoConfigExists', {domain: tenant}),
+            new Promise<boolean>(resolve => setTimeout(() => resolve(false), 1000))
           ])
           // const orgAuthUrl = await getOrgAuthUrl(tenant)
           console.log(`found company: ${orgExists}`)
           if (!orgExists) {
             throw new Error(`not found: ${tenant}`)
           }
+          // TODO instead of manual call... call into Supertokens
+          //  because manual state is probably throwing catch-all auth
+          //  pages on redirect off
+          //   Ideal init instead of custom junk code would be:
+          //   const redirect = client.authRecipe.initProviderLogin('saml-jackson')
+          //   window.location.href = redirect
+          const reqUrl = new URL(`${getAuthBaseUrl()}/authorisationurl`)
+          reqUrl.searchParams.append('thirdPartyId', 'saml-jackson')
+          reqUrl.searchParams.append('tenant', tenant)
+          reqUrl.searchParams.append('product', samlProduct)
+          console.log(`getting auth url from: ${reqUrl.toString()}`)
+          const response = await axios.get<{status: string, url: string}>(reqUrl.toString(),
+            {
+              headers: {
+                rid: 'thirdpartyemailpassword'
+              }
+            }
+          )
+          let urlObj = new URL(response.data.url)
+          urlObj.searchParams.append('redirect_uri', 'http://localhost:3000/auth/callback/saml-jackson')
+          // FIXME I have to manually add state for XRSF
+          //  but upon redirect SuperTokens doesn't recognize my state
+          urlObj.searchParams.append('state', uuidv4())
+          // redirect to auth url
+          window.location.href = urlObj.toString()
+        } else {
+          // TODO email password login
+          const response = await axios.post(`${getAuthBaseUrl()}/signin`, {
+            'formFields': [
+              {
+                'id': 'email',
+                'value': 'johndoe@gmail.com'
+              },
+              {
+                'id': 'password',
+                'value': 'testPass123'
+              }
+            ]
+          }, {
+            headers: {
+              rid: 'thirdpartyemailpassword'
+            }
+          })
+
+          console.log(`finished signing in: `, response)
         }
       }
       return undefined

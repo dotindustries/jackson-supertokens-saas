@@ -1,11 +1,8 @@
 import * as React from 'react'
 import {useRouter} from 'next/router'
 import {useInitApp} from '@modules/core/hooks/use-init-app'
-import {authPaths, authProviders, authType} from '@app/config/auth'
-import {Container, Flex} from '@chakra-ui/react'
-import {Logo} from '@modules/core/components/logo'
-import {Auth} from '@saas-ui/auth'
-import {Link} from '@modules/core/components/link'
+import {authPaths} from '@app/config/auth'
+import {Flex} from '@chakra-ui/react'
 import {AppLoader} from '@modules/core/components/app-loader'
 import {Hotkeys} from '@modules/core/components/hotkeys'
 import {AppShell, AppShellProps} from '@saas-ui/pro'
@@ -28,7 +25,9 @@ export const Authenticated: React.FC = ({children, ...rest}) => {
     ? authPaths[router.pathname]
     : authPaths['/login']
 
-  if (!isInitializing && !isAuthenticated) {
+  const code = new URL(window.location.href).searchParams.get('code')
+  if (!isInitializing && !isAuthenticated && code === null) {
+    console.log('redirecting to login', isInitializing, isAuthenticated, code)
     router.push(view)
     return <></>
     // disable built-in views

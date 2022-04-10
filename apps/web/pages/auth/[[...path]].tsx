@@ -11,7 +11,9 @@ const SuperTokensComponentNoSSR = dynamic(
 export default function Auth() {
   // if the user visits a page that is not handled by us (like /auth/random), then we redirect them back to the auth page.
   useEffect(() => {
-    if (SuperTokens.canHandleRoute() === false) {
+    const canHandleRoute = SuperTokens.canHandleRoute()
+    console.log('ST cannot handle route, redirecting to auth', canHandleRoute)
+    if (canHandleRoute === false) {
       redirectToAuth()
     }
   }, [])
