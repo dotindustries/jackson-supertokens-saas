@@ -1,4 +1,4 @@
-import trpc from '@trpc/server'
+import * as trpc from '@trpc/server'
 import {Context} from '@server/context'
 import {userRouter} from '@server/routers/userRouter'
 import {publicRouter} from '@server/routers/public'

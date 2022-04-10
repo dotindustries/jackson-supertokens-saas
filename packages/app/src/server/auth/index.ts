@@ -51,6 +51,7 @@ export const getOrgAuthUrl = async (tenantDomain: string): Promise<string | unde
 
   let config: AxiosResponse<SAMLTenantConfig>
   try {
+    console.log(`asking Jackson for existing organization: ${tenantDomain}`)
     config = await axios({
       method: 'get',
       url: `${jacksonApiUrl}/api/v1/saml/config?${params}`,
@@ -59,7 +60,7 @@ export const getOrgAuthUrl = async (tenantDomain: string): Promise<string | unde
       }
     })
   } catch (e) {
-    throw new OrganizationNotFound(tenantDomain)
+    throw new OrganizationNotFound(`not found: ${tenantDomain}`)
   }
 
   return config.data.idpMetadata.sso.redirectUrl
