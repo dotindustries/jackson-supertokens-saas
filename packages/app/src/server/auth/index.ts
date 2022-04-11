@@ -1,6 +1,6 @@
 import {Profile} from '@server/context'
 import axios, {AxiosResponse} from 'axios'
-import {jacksonApiUrl} from '@app/config/auth/backendConfig'
+import {jacksonApiSecret, jacksonApiUrl} from '@app/config/auth/backendConfig'
 import {samlProduct} from '@app/config/auth/appInfo'
 
 export interface SessionData {
@@ -51,7 +51,7 @@ export const domainSSOConfigExists = async (tenantDomain: string) => {
   try {
     const config = await axios.get<SAMLTenantConfig>(`${jacksonApiUrl}/api/v1/saml/config?${params}`, {headers: {
         // FIXME load jackson static access token from env var
-        Authorization: `Bearer ${'secret'}`
+        Authorization: `Bearer ${jacksonApiSecret}`
       }})
     exists = config.status === 200 && config.data && typeof config.data.tenant !== 'undefined'
   } catch (e) {
