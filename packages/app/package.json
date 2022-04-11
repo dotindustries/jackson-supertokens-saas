@@ -19,11 +19,11 @@
     "@types/uuid": "^8.3.4"
   },
   "peerDependencies": {
-    "@saas-ui/billing": "*",
-    "@saas-ui/charts": "*",
-    "@saas-ui/onboarding": "*",
-    "@saas-ui/pro": "*",
-    "@saas-ui/react": "*",
+    "@saas-ui/billing": "^0.1.1",
+    "@saas-ui/charts": "^0.0.1",
+    "@saas-ui/onboarding": "^0.1.1",
+    "@saas-ui/pro": "^0.3.3",
+    "@saas-ui/react": "^0.12.7",
     "react": ">=16.8.6"
   }
 }
