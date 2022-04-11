@@ -1,10 +1,10 @@
-import {trpc} from '@modules/utils/trpc'
+import {useGetCurrentUser} from '@modules/core/hooks/use-get-current-user'
 
 export const useGetTenants = () => {
-  const { data } = trpc.useQuery(['user.me'])
+  const user = useGetCurrentUser()
 
   return (
-    data?.profile?.organizations?.map((organization) => ({
+    user?.profile?.organizations?.map((organization) => ({
       id: organization.id,
       slug: organization.slug,
       label: organization.name || organization.id,

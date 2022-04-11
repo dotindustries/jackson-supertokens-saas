@@ -1,30 +1,39 @@
 import React, {useEffect} from 'react'
 import {useAuth} from '@saas-ui/auth'
 import {Loader} from '@saas-ui/react'
+import {useTenant} from '@saas-ui/pro'
 import {useRouter} from 'next/router'
+import {useGetCurrentUser} from '@modules/core/hooks/use-get-current-user'
 
 interface indexProps {
 }
 
 export const index: React.FC<indexProps> = ({}) => {
   const router = useRouter()
-  const {isLoggingIn, isLoading, isAuthenticated} = useAuth()
+  // TODO think about user in value in useAuth how it differs from useGetCurrentUser()
+  const {isLoggingIn, isAuthenticated} = useAuth()
+  const tenant = useTenant()
+
+  const user = useGetCurrentUser()
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      // FIXME this is never called, because of the outer auth wrapper?
-      router.push('/auth/login')
-    }
-
     if (isLoggingIn) {
       return
     }
 
-    if (isAuthenticated) {
-      router.push('/home')
+    if (!isAuthenticated) {
+      console.error('FATAL: we rendered home and we are not authenticated')
+      // router.push('/home')
     }
-
-  }, [isLoggingIn, isLoading, isAuthenticated])
+    // TODO look at the initial tenant code in saas-ui-pro nextjs sample for redirection to organization to be created
+    if (user && (!user.profile.organizations || !user.profile.organizations.length)) {
+      router.push('/app/getting-started')
+    } else if (tenant) {
+      router.push(`/app/${tenant}`)
+    } else if (user?.profile.organizations[0]) {
+      router.push(`/app/${user.profile.organizations[0].slug}`)
+    }
+  }, [isLoggingIn, user])
 
   console.log('showing loader on index')
   return <Loader />
