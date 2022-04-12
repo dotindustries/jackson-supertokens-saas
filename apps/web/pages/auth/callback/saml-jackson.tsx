@@ -9,7 +9,7 @@ interface callbackProps {
 export const callback: React.FC<callbackProps> = ({}) => {
   const router = useRouter()
   const code = new URL(window.location.href).searchParams.get('code')
-
+  // TODO replace block with SuperTokens helper method to check local state
   console.log('received code', code)
   fetch('http://localhost:3000/api/auth/signinup', {
     method: 'POST',

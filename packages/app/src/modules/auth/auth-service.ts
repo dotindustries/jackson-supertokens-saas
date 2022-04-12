@@ -49,7 +49,6 @@ const supertokens = (client: {
       }
     },
     onLoadUser: async (): Promise<User | null> => {
-      console.log('onLoadUser called')
       if (await client.sessionRecipe.doesSessionExist()) {
         let tokenPayload = await client.sessionRecipe.getAccessTokenPayloadSecurely()
         let payload = tokenPayload as TokenPayload
@@ -87,12 +86,10 @@ const supertokens = (client: {
           if (!orgExists) {
             throw new Error(`not found: ${tenant}`)
           }
-          // TODO instead of manual call... call into Supertokens
-          //  because manual state is probably throwing catch-all auth
-          //  pages on redirect off
-          //   Ideal init instead of custom code would be:
-          //   const redirect = client.authRecipe.initProviderLogin('saml-jackson')
+          // TODO replace with SuperTokens helper:
+          // e.g  const redirect = client.authRecipe.initProviderLogin('saml-jackson')
           //   window.location.href = redirect
+          // region SuperTokens provider authUrl without helper method
           const getCompanyAuthUrl = new URL(`${getAuthBaseUrl()}/authorisationurl`)
           getCompanyAuthUrl.searchParams.append('thirdPartyId', 'saml-jackson')
           getCompanyAuthUrl.searchParams.append('tenant', tenant)
@@ -110,32 +107,25 @@ const supertokens = (client: {
           // FIXME I have to manually add state for XRSF
           //  but upon redirect SuperTokens doesn't recognize my state
           urlObj.searchParams.append('state', uuidv4())
-          // redirect to auth url
           window.location.href = urlObj.toString()
+          // endregion
         } else {
-          // TODO email password login
-          //   Ideal init instead of custom code would be:
-          //   client.authRecipe.signIn('johndoe@gmail.com', 'testPass123')
-          const response = await axios.post(`${getAuthBaseUrl()}/signin`, {
-            'formFields': [
-              {
-                'id': 'email',
-                'value': params.email
-              },
-              {
-                'id': 'password',
-                'value': params.password
-              }
-            ]
-          }, {
+          const response = await fetch(`${getAuthBaseUrl()}/signin`, {
+            method: 'POST',
             headers: {
               rid: 'thirdpartyemailpassword'
-            }
+            },
+            body: JSON.stringify({'formFields': [
+                {
+                  'id': 'email',
+                  'value': params.email
+                },
+                {
+                  'id': 'password',
+                  'value': params.password
+                }
+              ]})
           })
-
-          // cleanup is required otherwise
-          //   on return Auth will not recognize new session
-          document.cookie = 'sIRTFrontend' + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
 
           // {
           //   "status": "OK",
@@ -145,9 +135,10 @@ const supertokens = (client: {
           //     "timeJoined": 1638433545183
           //   }
           // }
+          const data = await response.json()
           user = {
-            id: response.data.user.id,
-            email: response.data.user.email
+            id: data.user.id,
+            email: data.user.email
           }
         }
       }
