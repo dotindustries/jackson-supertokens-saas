@@ -12,7 +12,7 @@ export interface SAMLFormProps
   extends Pick<FormProps<SubmitParams>, 'schema' | 'resolver'> {
   action?: AuthActionEnum
   onSuccess?: (data: any) => void
-  onError?: (error: any) => void
+  onError?: (error: any, email?: string) => void
   onValidationError?: (error: FieldErrors<SubmitParams>) => void
   submitLabel?: string
   defaultValues?: Record<string, any>
@@ -48,7 +48,7 @@ export const SAMLForm: React.FC<SAMLFormProps> = ({
   })
 
   const handleSubmit: SubmitHandler<SubmitParams> = ({email}) => {
-    return submit({email}).then(onSuccess).catch(onError)
+    return submit({email}).then(onSuccess).catch(error => onError(error, email))
   }
 
   // Succesful magic link login might not always return data

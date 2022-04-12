@@ -9,6 +9,7 @@ import {Logo} from '@modules/core/components/logo'
 import {SAMLForm} from '@modules/auth/components/SAMLForm'
 
 export const LoginPage = () => {
+  const [email, setEmail] = useState('')
   const [companyNotFound, setCompanyNotFound] = useState(false)
   const {isAuthenticated} = useAuth()
   const t = useTranslate()
@@ -31,13 +32,19 @@ export const LoginPage = () => {
           <AuthFormTitle><T keyName="auth.header_title">Welcome back</T></AuthFormTitle>
           {companyNotFound
             ? null
-            : <SAMLForm action="logIn" submitLabel={t('auth.login_button')} onError={e => {
+            : <SAMLForm action="logIn" submitLabel={t('auth.login_button')} onError={(e, email) => {
+              if (email) {
+                setEmail(email)
+              }
+              if (e.message.includes('not found')) {
+                setCompanyNotFound(true)
+                return
+              }
               console.error(e)
-              setCompanyNotFound(true)
             }}/>}
           {!companyNotFound
             ? null
-            : <PasswordForm action="logIn" submitLabel={t('auth.login_button')}/>
+            : <PasswordForm action="logIn" defaultValues={{'email': email}} submitLabel={t('auth.login_button')}/>
           }
         </Container>
 

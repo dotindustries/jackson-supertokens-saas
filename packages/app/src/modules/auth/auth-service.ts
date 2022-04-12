@@ -78,13 +78,13 @@ const supertokens = (client: {
       // Jackson SAML logic
       if (params.email) {
         if (!params.password) {
-          const tenant = params.email.split('@')[1]
+          const domain = params.email.split('@')[1]
           const orgExists = await Promise.race([
-            trpcClient.query('public.ssoConfigExists', {domain: tenant}),
+            trpcClient.query('public.ssoConfigExists', {domain: domain}),
             new Promise<boolean>(resolve => setTimeout(() => resolve(false), 1000))
           ])
           if (!orgExists) {
-            throw new Error(`not found: ${tenant}`)
+            throw new Error(`not found: ${domain}`)
           }
           // TODO replace with SuperTokens helper:
           // e.g  const redirect = client.authRecipe.initProviderLogin('saml-jackson')
@@ -92,7 +92,7 @@ const supertokens = (client: {
           // region SuperTokens provider authUrl without helper method
           const getCompanyAuthUrl = new URL(`${getAuthBaseUrl()}/authorisationurl`)
           getCompanyAuthUrl.searchParams.append('thirdPartyId', 'saml-jackson')
-          getCompanyAuthUrl.searchParams.append('tenant', tenant)
+          getCompanyAuthUrl.searchParams.append('tenant', domain)
           getCompanyAuthUrl.searchParams.append('product', samlProduct)
           console.log(`getting auth url from: ${getCompanyAuthUrl.toString()}`)
           const response = await axios.get<{status: string, url: string}>(getCompanyAuthUrl.toString(),
