@@ -8,29 +8,6 @@ import {backendConfig} from '@app/config/auth/backendConfig'
 
 supertokens.init(backendConfig())
 
-export interface Organization {
-  id: string
-  slug: string
-  name: string
-}
-
-export interface Profile {
-  id: string
-  idp_id: string
-  email: string
-  company_id?: string
-  organizations: Organization[]
-  first_name?: string
-  last_name?: string
-  raw_attributes?: {
-    [key: string]: any
-  };
-}
-
-export interface TokenPayload {
-  profile: Profile
-}
-
 export const createContext = async ({
                                       req,
                                       res

@@ -1,7 +1,7 @@
 import {z} from 'zod'
 import {createProtectedRouter} from '@server/createProtectedRouter'
-import {Organization} from '@server/context'
 import * as trpc from '@trpc/server'
+import {Organization} from '@server/organization'
 
 export const orgRouter = createProtectedRouter()
   .query('get', {

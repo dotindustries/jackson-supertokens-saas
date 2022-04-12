@@ -1,11 +1,6 @@
-import {Profile} from '@server/context'
 import axios, {AxiosResponse} from 'axios'
 import {jacksonApiSecret, jacksonApiUrl} from '@app/config/auth/backendConfig'
 import {samlProduct} from '@app/config/auth/appInfo'
-
-export interface SessionData {
-  profile: Profile
-}
 
 export class OrganizationNotFound extends Error {
   constructor(m: string) {

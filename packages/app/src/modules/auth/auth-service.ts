@@ -8,6 +8,7 @@ import type {AppRouter} from '@server/routers/_app'
 import {getAuthBaseUrl} from '@modules/utils/auth'
 import {getTrpcBaseUrl} from '@modules/utils/trpc'
 import {samlProduct} from '@app/config/auth/appInfo'
+import {TokenPayload} from '@server/tokenPayload'
 
 export const createSupertokensAuthService = (): AuthProviderProps => {
   return supertokens({
@@ -43,17 +44,19 @@ const supertokens = (client: {
         // const jwtPropertyName = accessTokenPayload['_jwtPName']
         return accessTokenPayload // accessTokenPayload[jwtPropertyName]
       } else {
-        console.log('no session')
+        console.warn('no session')
         return undefined
       }
     },
     onLoadUser: async (): Promise<User | null> => {
       console.log('onLoadUser called')
       if (await client.sessionRecipe.doesSessionExist()) {
+        let tokenPayload = await client.sessionRecipe.getAccessTokenPayloadSecurely()
+        let payload = tokenPayload as TokenPayload
         return {
           id: await client.sessionRecipe.getUserId(),
-          email: '',
-          accessTokenPayload: await client.sessionRecipe.getAccessTokenPayloadSecurely()
+          email: payload.profile.email,
+          accessTokenPayload: tokenPayload
         }
       } else {
         return null
@@ -66,11 +69,11 @@ const supertokens = (client: {
       }
 
       if (params.otp) {
-        // otp logic
+        // otp logic??
       }
 
       if (params.provider) {
-        // oidc logic
+        // SAML and oidc logic??
       }
 
       // Jackson SAML logic
@@ -81,8 +84,6 @@ const supertokens = (client: {
             trpcClient.query('public.ssoConfigExists', {domain: tenant}),
             new Promise<boolean>(resolve => setTimeout(() => resolve(false), 1000))
           ])
-          // const orgAuthUrl = await getOrgAuthUrl(tenant)
-          console.log(`found company: ${orgExists}`)
           if (!orgExists) {
             throw new Error(`not found: ${tenant}`)
           }
@@ -92,12 +93,12 @@ const supertokens = (client: {
           //   Ideal init instead of custom code would be:
           //   const redirect = client.authRecipe.initProviderLogin('saml-jackson')
           //   window.location.href = redirect
-          const reqUrl = new URL(`${getAuthBaseUrl()}/authorisationurl`)
-          reqUrl.searchParams.append('thirdPartyId', 'saml-jackson')
-          reqUrl.searchParams.append('tenant', tenant)
-          reqUrl.searchParams.append('product', samlProduct)
-          console.log(`getting auth url from: ${reqUrl.toString()}`)
-          const response = await axios.get<{status: string, url: string}>(reqUrl.toString(),
+          const getCompanyAuthUrl = new URL(`${getAuthBaseUrl()}/authorisationurl`)
+          getCompanyAuthUrl.searchParams.append('thirdPartyId', 'saml-jackson')
+          getCompanyAuthUrl.searchParams.append('tenant', tenant)
+          getCompanyAuthUrl.searchParams.append('product', samlProduct)
+          console.log(`getting auth url from: ${getCompanyAuthUrl.toString()}`)
+          const response = await axios.get<{status: string, url: string}>(getCompanyAuthUrl.toString(),
             {
               headers: {
                 rid: 'thirdpartyemailpassword'
@@ -131,6 +132,10 @@ const supertokens = (client: {
               rid: 'thirdpartyemailpassword'
             }
           })
+
+          // cleanup is required otherwise
+          //   on return Auth will not recognize new session
+          document.cookie = 'sIRTFrontend' + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
 
           // {
           //   "status": "OK",
