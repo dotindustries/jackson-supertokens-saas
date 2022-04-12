@@ -2,6 +2,7 @@ import * as trpc from '@trpc/server'
 import * as trpcNext from '@trpc/server/adapters/next'
 import {superTokensNextWrapper} from 'supertokens-node/nextjs'
 import {verifySession} from 'supertokens-node/lib/build/recipe/session/framework/express'
+import {SessionRequest} from 'supertokens-node/framework/express'
 import supertokens from 'supertokens-node'
 import {backendConfig} from '@app/config/auth/backendConfig'
 
@@ -46,14 +47,7 @@ export const createContext = async ({
   return {
     req,
     res,
-    session: {
-      // @ts-ignore
-      userId: req.session?.getUserId() as string,
-      // @ts-ignore
-      sessionHandle: req.session?.getHandle() as string,
-      // @ts-ignore
-      userDataInAccessToken: req.session?.getAccessTokenPayload() as TokenPayload
-    },
+    session: (req as unknown as SessionRequest).session
     // TODO add prisma
     // prisma,
   }
