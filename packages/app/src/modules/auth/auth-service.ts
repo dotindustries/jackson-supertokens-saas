@@ -60,6 +60,7 @@ const supertokens = (client: {
       }
     },
     onLogin: async (params: AuthParams, options: AuthOptions | undefined): Promise<User | undefined | null> => {
+      let user: User | undefined
       if (!params.email && !params.otp) {
         throw new Error(`invalid login parameters`)
       }
@@ -88,7 +89,7 @@ const supertokens = (client: {
           // TODO instead of manual call... call into Supertokens
           //  because manual state is probably throwing catch-all auth
           //  pages on redirect off
-          //   Ideal init instead of custom junk code would be:
+          //   Ideal init instead of custom code would be:
           //   const redirect = client.authRecipe.initProviderLogin('saml-jackson')
           //   window.location.href = redirect
           const reqUrl = new URL(`${getAuthBaseUrl()}/authorisationurl`)
@@ -112,15 +113,17 @@ const supertokens = (client: {
           window.location.href = urlObj.toString()
         } else {
           // TODO email password login
+          //   Ideal init instead of custom code would be:
+          //   client.authRecipe.signIn('johndoe@gmail.com', 'testPass123')
           const response = await axios.post(`${getAuthBaseUrl()}/signin`, {
             'formFields': [
               {
                 'id': 'email',
-                'value': 'johndoe@gmail.com'
+                'value': params.email
               },
               {
                 'id': 'password',
-                'value': 'testPass123'
+                'value': params.password
               }
             ]
           }, {
@@ -129,10 +132,22 @@ const supertokens = (client: {
             }
           })
 
-          console.log(`finished signing in: `, response)
+          // {
+          //   "status": "OK",
+          //   "user": {
+          //     "id": "fa7a0841-b533-4478-95533-0fde890c3483",
+          //     "email": "johndoe@gmail.com",
+          //     "timeJoined": 1638433545183
+          //   }
+          // }
+          user = {
+            id: response.data.user.id,
+            email: response.data.user.email
+          }
         }
       }
-      return undefined
+      // TODO check with Eelco why do we have to return the user?
+      return user
     },
     onLogout(options: AuthOptions | undefined): Promise<void> {
       console.log('onLogout called', options)
@@ -142,9 +157,36 @@ const supertokens = (client: {
       console.log('onResetPassword called', params, options)
       return Promise.resolve(undefined)
     },
-    onSignup(params: AuthParams, options: AuthOptions | undefined): Promise<User | undefined | null> {
+    async onSignup(params: AuthParams, options: AuthOptions | undefined): Promise<User | undefined | null> {
+      let user: User | undefined
       console.log('onSignup called', params, options)
-      return Promise.resolve(undefined)
+      const response = await axios.post(`${getAuthBaseUrl()}/signup`, {
+        "formFields": [
+          {
+            "id": "email",
+            "value": params.email
+          },
+          {
+            "id": "password",
+            "value": params.password
+          }
+        ]
+      })
+      // {
+      //   "status": "OK",
+      //   "user": {
+      //     "id": "fa7a0841-b533-4478-95533-0fde890c3483",
+      //     "email": "johndoe@gmail.com",
+      //     "timeJoined": 1638433545183
+      //   }
+      // }
+      if (response.status === 200) {
+        user = {
+          id: response.data.user.id,
+          email: response.data.user.email
+        }
+      }
+      return user
     },
     onUpdatePassword(params: Pick<AuthParams, 'password'>, options: AuthOptions | undefined): Promise<void> {
       console.log('onUpdatePassword called', params, options)

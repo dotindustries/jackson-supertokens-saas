@@ -20,7 +20,7 @@ export const SignupPage = () => {
         spacing="8"
       >
         <Container>
-          <SignupView title="Sign up" type="magiclink" />
+          <SignupView title="Sign up" type="password" />
         </Container>
 
         <Link href="/login">Already have an account? Log in.</Link>
