@@ -23,9 +23,10 @@ export const index: React.FC<indexProps> = ({}) => {
 
     if (!isAuthenticated) {
       console.error('FATAL: we rendered home and we are not authenticated')
-      // router.push('/home')
+      router.push('/home')
     }
-    // TODO look at the initial tenant code in saas-ui-pro nextjs sample for redirection to organization to be created
+
+    console.log(user)
     if (user && (!user.profile.organizations || !user.profile.organizations.length)) {
       router.push('/app/getting-started')
     } else if (tenant) {
