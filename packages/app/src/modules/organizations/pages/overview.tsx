@@ -1,5 +1,3 @@
-import { useGetOrganizationQuery } from '@app/graphql'
-
 import { Grid, GridItem } from '@chakra-ui/react'
 
 import { FaGithub, FaTwitter } from 'react-icons/fa'
@@ -18,11 +16,11 @@ import { SalesByCountry } from '../components/metrics/sales-by-country'
 import { Today } from '../components/metrics/today'
 import { MRR } from '../components/metrics/mrr'
 
+import {trpc} from '@modules/utils/trpc'
+
 export function OverviewPage() {
   const tenant = useTenant()
-  const { data, isLoading } = useGetOrganizationQuery({
-    slug: tenant,
-  })
+  const { data, isLoading } = trpc.useQuery(['org.get', {slug: tenant}])
 
   const organization = data?.organization
 

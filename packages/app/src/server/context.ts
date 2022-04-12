@@ -8,7 +8,7 @@ import {backendConfig} from '@app/config/auth/backendConfig'
 
 supertokens.init(backendConfig())
 
-interface Organization {
+export interface Organization {
   id: string
   slug: string
   name: string

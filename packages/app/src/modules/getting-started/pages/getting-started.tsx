@@ -7,7 +7,7 @@ import { Container, Text, ModalFooter, useDisclosure } from '@chakra-ui/react'
 import { Field, FormLayout, SubmitButton, FormDialog } from '@saas-ui/react'
 import { Page } from '@saas-ui/pro'
 
-import { useCreateOrganizationMutation } from '@app/graphql'
+import { trpc } from '@modules/utils/trpc'
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -20,7 +20,7 @@ const schema = Yup.object().shape({
 export function GettingStartedPage(props: any) {
   const router = useRouter()
 
-  const { mutateAsync: createOrganization } = useCreateOrganizationMutation()
+  const { mutateAsync: createOrganization } = trpc.useMutation(['org.create'])
 
   const disclosure = useDisclosure()
 
@@ -54,7 +54,7 @@ export function GettingStartedPage(props: any) {
           onSubmit={(data) => {
             return createOrganization({ name: data.name })
               .then((result) => {
-                const slug = result?.createOrganization?.slug
+                const slug = result?.organization?.slug
                 if (slug) {
                   disclosure.onClose()
                   return slug
