@@ -5,7 +5,6 @@ import {
   AuthProvider,
   AuthProviderProps,
   ModalsProvider,
-  useAuth
 } from '@saas-ui/react'
 
 import {TenancyProvider, Tenant} from '@saas-ui/pro'

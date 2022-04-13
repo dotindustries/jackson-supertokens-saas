@@ -1,10 +1,10 @@
-import {useGetCurrentUser} from '@modules/core/hooks/use-get-current-user'
+import {useCurrentUser} from '@modules/core/hooks/use-current-user'
 
 export const useGetTenants = () => {
-  const user = useGetCurrentUser()
+  const user = useCurrentUser()
 
   return (
-    user?.profile?.organizations?.map((organization) => ({
+    user?.profile.organizations?.map((organization) => ({
       id: organization.id,
       slug: organization.slug,
       label: organization.name || organization.id,

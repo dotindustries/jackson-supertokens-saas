@@ -3,18 +3,16 @@ import {useAuth} from '@saas-ui/auth'
 import {Loader} from '@saas-ui/react'
 import {useTenant} from '@saas-ui/pro'
 import {useRouter} from 'next/router'
-import {useGetCurrentUser} from '@modules/core/hooks/use-get-current-user'
+import {useCurrentUser} from '@modules/core/hooks/use-current-user'
 
 interface indexProps {
 }
 
 export const index: React.FC<indexProps> = ({}) => {
   const router = useRouter()
-  // TODO think about user in value in useAuth how it differs from useGetCurrentUser()
   const {isLoggingIn, isAuthenticated} = useAuth()
   const tenant = useTenant()
-
-  const user = useGetCurrentUser()
+  const user = useCurrentUser()
 
   useEffect(() => {
     if (isLoggingIn) {
@@ -26,7 +24,6 @@ export const index: React.FC<indexProps> = ({}) => {
       router.push('/home')
     }
 
-    console.log(user)
     if (user && (!user.profile.organizations || !user.profile.organizations.length)) {
       router.push('/app/getting-started')
     } else if (tenant) {

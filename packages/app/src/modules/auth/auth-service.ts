@@ -9,6 +9,7 @@ import {getAuthBaseUrl} from '@modules/utils/auth'
 import {getTrpcBaseUrl} from '@modules/utils/trpc'
 import {samlProduct} from '@app/config/auth/appInfo'
 import {TokenPayload} from '@server/tokenPayload'
+import {Profile} from '@server/profile'
 
 export const createSupertokensAuthService = (): AuthProviderProps => {
   return supertokens({
@@ -26,6 +27,10 @@ type SessionRecipe = {
   doesSessionExist: () => Promise<boolean>
   getAccessTokenPayloadSecurely: () => Promise<any>
   getUserId: () => Promise<string>
+}
+
+export type LumenUser = User & {
+  profile: Profile
 }
 
 const supertokens = (client: {
@@ -48,21 +53,21 @@ const supertokens = (client: {
         return undefined
       }
     },
-    onLoadUser: async (): Promise<User | null> => {
+    onLoadUser: async (): Promise<LumenUser | null> => {
       if (await client.sessionRecipe.doesSessionExist()) {
         let tokenPayload = await client.sessionRecipe.getAccessTokenPayloadSecurely()
         let payload = tokenPayload as TokenPayload
         return {
           id: await client.sessionRecipe.getUserId(),
           email: payload.profile.email,
-          accessTokenPayload: tokenPayload
+          profile: tokenPayload.profile
         }
       } else {
         return null
       }
     },
-    onLogin: async (params: AuthParams, options: AuthOptions | undefined): Promise<User | undefined | null> => {
-      let user: User | undefined
+    onLogin: async (params: AuthParams, options: AuthOptions | undefined): Promise<LumenUser | undefined | null> => {
+      let user: LumenUser | undefined
       if (!params.email && !params.otp) {
         throw new Error(`invalid login parameters`)
       }
@@ -136,13 +141,15 @@ const supertokens = (client: {
           //   }
           // }
           const data = await response.json()
+          const payload = await Session.getAccessTokenPayloadSecurely()
+          console.log(payload)
           user = {
             id: data.user.id,
-            email: data.user.email
+            email: data.user.email,
+            profile: (payload as TokenPayload).profile
           }
         }
       }
-      // TODO check with Eelco why do we have to return the user?
       return user
     },
     onLogout(options: AuthOptions | undefined): Promise<void> {

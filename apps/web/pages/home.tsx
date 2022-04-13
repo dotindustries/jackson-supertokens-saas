@@ -4,14 +4,14 @@ import {Container} from '@chakra-ui/react'
 import {Card, CardContainer} from '@saas-ui/react'
 import {useAuth} from '@saas-ui/auth'
 import {createPage} from '@app/nextjs'
-import {useGetCurrentUser} from '@modules/core/hooks/use-get-current-user'
+import {useCurrentUser} from '@modules/core/hooks/use-current-user'
 
 const Home = createPage({
   title: 'Home',
   renderComponent: (props) => {
     const {user} = useAuth()
 
-    const currentUser = useGetCurrentUser()
+    const currentUser = useCurrentUser()
 
     return (
       <Container>
@@ -34,7 +34,7 @@ const Home = createPage({
 
             <Card>
               <h2>User data</h2>
-              <pre>{JSON.stringify(user?.accessTokenPayload, null, '  ')}</pre>
+              <pre>{JSON.stringify(user, null, '  ')}</pre>
             </Card>
             <Card>
               <h2>Current User data</h2>

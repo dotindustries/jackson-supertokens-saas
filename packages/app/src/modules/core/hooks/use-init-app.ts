@@ -8,14 +8,11 @@ import {trpc} from '@modules/utils/trpc'
  * Like user data, feature flags, etc.
  **/
 export const useInitApp = () => {
-  const { isLoading, isAuthenticated, isLoggingIn } = useAuth()
-
-  // Load current user and tenant data
-  const currentUser = trpc.useQuery(['user.me'], {enabled: isAuthenticated})
+  const { isLoading, isAuthenticated, isLoggingIn, user } = useAuth()
 
   return {
     isInitializing:
-      isLoading || isLoggingIn || (isAuthenticated && !currentUser.isFetched),
+      isLoading || isLoggingIn || (isAuthenticated && !user),
     isAuthenticated,
   }
 }
