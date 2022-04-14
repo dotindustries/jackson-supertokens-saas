@@ -7,8 +7,7 @@ interface HotkeysProps {
 }
 
 export const Hotkeys: React.FC<HotkeysProps> = ({ children, hotkeys }) => {
-  console.log('got hotkeys', hotkeys)
-  console.log('deafult hotkeys', appHotkeys)
+  console.log('received hotkeys', hotkeys, appHotkeys)
   return (
     <HotkeysProvider hotkeys={hotkeys || appHotkeys}>
       {children}
