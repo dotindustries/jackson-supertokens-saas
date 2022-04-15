@@ -4,8 +4,10 @@ import {defaultPermissionBehavior, permissionCacheTTL} from '@app/config/auth'
 
 export type Permission = string
 
+export type Resource = string
+
 type PermissionContextType = {
-  isAllowedTo: (permission: Permission) => Promise<boolean>
+  isAllowedTo: (permission: Permission, r?: Resource) => Promise<boolean>
 }
 
 // Default behavior for the permission provider context
@@ -18,19 +20,20 @@ const defaultBehavior: PermissionContextType = {
 export const PermissionContext = createContext<PermissionContextType>(defaultBehavior)
 
 interface PermissionsProps {
-  fetchPermission: (p: Permission) => Promise<boolean>
+  fetchPermission: (p: Permission, r?: Resource) => Promise<boolean>
 }
 
 export const PermissionProvider: React.FC<PermissionsProps> = ({fetchPermission, children}) => {
   const cache = LocalStorage
 
   // Creates a method that returns cached permissions otherwise fetches from remote then caches and returns
-  const isAllowedTo = async (permission: Permission) => {
-    if (cache.keyExists(permission)) {
-      return cache[permission]
+  const isAllowedTo = async (permission: Permission, resource?: Resource) => {
+    let key = permission + (resource || '')
+    if (cache.keyExists(key)) {
+      return cache[key]
     }
-    const isAllowed = await fetchPermission(permission)
-    cache.put(permission, isAllowed, permissionCacheTTL)
+    const isAllowed = await fetchPermission(permission, resource)
+    cache.put(key, isAllowed, permissionCacheTTL)
     return isAllowed
   }
 

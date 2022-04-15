@@ -7,9 +7,10 @@ import {AppLoader} from '@modules/core/components/app-loader'
 import {Hotkeys} from '@modules/core/components/hotkeys'
 import {AppShell, AppShellProps} from '@saas-ui/pro'
 import {HotkeysListOptions} from '@saas-ui/react'
-import PermissionProvider, {Permission} from '@modules/core/providers/permissions'
+import PermissionProvider, {Permission, Resource} from '@modules/core/providers/permissions'
 import {LumenUser} from '@modules/auth/auth-service'
 import {useCurrentUser} from '@modules/core/hooks/use-current-user'
+import {trpc} from '@modules/utils/trpc'
 
 export const AuthLayout: React.FC = ({children, ...rest}) => {
   return (
@@ -85,9 +86,11 @@ export const Layout: React.FC<LayoutProps> = ({
 
 export const Permissions: React.FC = ({children}) => {
   const {user} = useCurrentUser()
-  return <PermissionProvider fetchPermission={fetchPermission(user)}>{children}</PermissionProvider>
+  const {mutateAsync: checkPermissions} = trpc.useMutation(['user.checkPermission'])
+  return <PermissionProvider fetchPermission={fetchPermission(user, checkPermissions)}>{children}</PermissionProvider>
 }
 
-const fetchPermission = (user: LumenUser) => async (permission: Permission) => {
-  return Promise.resolve(user.permissions?.includes(permission) ?? false)
+const fetchPermission = (user: LumenUser, checkPermissions: (vars: {permission: string, resource: string | undefined}) => Promise<boolean>) => async (permission: Permission, resource?: Resource) => {
+  // TODO define how to pass re
+  return Promise.resolve(user.permissions?.includes(permission) ?? checkPermissions({permission, resource}))
 }

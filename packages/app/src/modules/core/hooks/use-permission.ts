@@ -1,13 +1,13 @@
 import {useContext, useState} from 'react'
-import {Permission, PermissionContext} from '@modules/core/providers/permissions'
+import {Permission, PermissionContext, Resource} from '@modules/core/providers/permissions'
 
-export const usePermission = (permission: Permission) => {
+export const usePermission = (permission: Permission, resource?: Resource) => {
   const [loading, setLoading] = useState(true)
   const [allowed, setAllowed] = useState(false)
 
   const {isAllowedTo} = useContext(PermissionContext)
 
-  isAllowedTo(permission).then(isAllowed => {
+  isAllowedTo(permission, resource).then(isAllowed => {
     setLoading(false)
     setAllowed(isAllowed)
   })
