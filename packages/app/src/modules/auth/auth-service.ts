@@ -61,6 +61,7 @@ const supertokens = (client: {
       if (await client.sessionRecipe.doesSessionExist()) {
         let tokenPayload = await client.sessionRecipe.getAccessTokenPayloadSecurely()
         let payload = tokenPayload as TokenPayload
+        // todo fetch additional props for user from backend (company, orgs, permissions etc.)
         return {
           id: await client.sessionRecipe.getUserId(),
           email: payload.profile.email,
@@ -146,6 +147,8 @@ const supertokens = (client: {
           // }
           const data = await response.json()
           const payload = await Session.getAccessTokenPayloadSecurely()
+          // TODO double check if we actually get what we need here
+          //  or do we need to wait for session to be recognized?
           console.log(payload)
           user = {
             id: data.user.id,
