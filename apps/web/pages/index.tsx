@@ -12,7 +12,7 @@ export const index: React.FC<indexProps> = ({}) => {
   const router = useRouter()
   const {isLoggingIn, isAuthenticated} = useAuth()
   const tenant = useTenant()
-  const user = useCurrentUser()
+  const {user} = useCurrentUser()
 
   useEffect(() => {
     if (isLoggingIn) {

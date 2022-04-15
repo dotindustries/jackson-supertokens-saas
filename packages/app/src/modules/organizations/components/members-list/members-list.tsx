@@ -31,15 +31,7 @@ import {
   OverflowMenu,
   PersonaAvatar,
 } from '@saas-ui/react'
-
-export interface Member {
-  id: string
-  email: string
-  name?: string
-  status?: 'invited' | 'active'
-  roles?: string | string[]
-  presence?: string
-}
+import {Member} from '@server/organization'
 
 const Roles = ({ roles }: { roles?: string | string[] }) => {
   if (!roles || !roles.length) {

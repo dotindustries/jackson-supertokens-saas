@@ -84,7 +84,7 @@ export const Layout: React.FC<LayoutProps> = ({
 
 
 export const Permissions: React.FC = ({children}) => {
-  const user = useCurrentUser()
+  const {user} = useCurrentUser()
   return <PermissionProvider fetchPermission={fetchPermission(user)}>{children}</PermissionProvider>
 }
 

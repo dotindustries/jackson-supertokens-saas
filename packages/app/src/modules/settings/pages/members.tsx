@@ -1,27 +1,20 @@
 import * as React from 'react'
-import { useSnackbar, useModals, useCurrentUser } from '@saas-ui/react'
-import { Page, Section, useTenant } from '@saas-ui/pro'
+import {useSnackbar, useModals, useCurrentUser} from '@saas-ui/react'
+import {Page, Section, useTenant} from '@saas-ui/pro'
 
 import {
-  useGetOrganizationQuery,
-  useRemoveUserFromOrganizationMutation,
-  useInviteToOrganizationMutation,
-} from '@app/graphql'
-
-import {
-  MembersList,
-  Member,
+  MembersList
 } from '@modules/organizations/components/members-list'
-import { MembersInviteData } from '@modules/organizations/components/members-invite-dialog'
+import {MembersInviteData} from '@modules/organizations/components/members-invite-dialog'
+import {trpc} from '@modules/utils/trpc'
+import {Member} from '@server/organization'
 
 export function MembersSettingsPage() {
   const tenant = useTenant()
   const snackbar = useSnackbar()
   const modals = useModals()
 
-  const { data, isLoading } = useGetOrganizationQuery({
-    slug: tenant,
-  })
+  const {data, isLoading} = trpc.useQuery(['org.get', {slug: tenant}])
 
   const organization = data?.organization
 
@@ -29,31 +22,21 @@ export function MembersSettingsPage() {
     return null
   }
 
-  const members =
-    organization?.members.map(
-      ({ roles, user: { id, email, name, status } }) => {
-        return {
-          id,
-          email,
-          name,
-          status,
-          roles,
-        } as Member
-      },
-    ) || []
+  const members = organization?.members || []
 
-  const inviteToOrganization = useInviteToOrganizationMutation()
 
-  const removeUserFromOrganization = useRemoveUserFromOrganizationMutation()
+  const inviteToOrganization = trpc.useMutation(['org.inviteMember'])
 
-  const onInvite = async ({ emails, role }: MembersInviteData) => {
+  const removeUserFromOrganization = trpc.useMutation(['org.removeMember'])
+
+  const onInvite = async ({emails, role}: MembersInviteData) => {
     if (!organization) return
 
     return snackbar.promise(
       inviteToOrganization.mutateAsync({
         organizationId: organization.id,
         emails,
-        role,
+        role
       }),
       {
         loading:
@@ -61,8 +44,8 @@ export function MembersSettingsPage() {
             ? `Inviting ${emails[0]}...`
             : `Inviting ${emails.length} people...`,
         success: `Invitation(s) have been sent.`,
-        error: (err: Error) => err,
-      },
+        error: (err: Error) => err
+      }
     )
   }
 
@@ -72,13 +55,13 @@ export function MembersSettingsPage() {
     return snackbar.promise(
       removeUserFromOrganization.mutateAsync({
         userId: member.id,
-        organizationId: organization.id,
+        organizationId: organization.id
       }),
       {
         loading: `Removing ${member.email}...`,
         success: `Removed ${member.email}!`,
-        error: (err: Error) => err,
-      },
+        error: (err: Error) => err
+      }
     )
   }
 
@@ -92,20 +75,20 @@ export function MembersSettingsPage() {
       }?`,
       confirmProps: {
         colorScheme: 'red',
-        label: 'Remove',
+        label: 'Remove'
       },
       onConfirm: () =>
         snackbar.promise(
           removeUserFromOrganization.mutateAsync({
             organizationId: organization.id,
-            userId: member.id,
+            userId: member.id
           }),
           {
             loading: `Removing ${member.email}...`,
             success: `Removed ${member.email}!`,
-            error: (err: Error) => err,
-          },
-        ),
+            error: (err: Error) => err
+          }
+        )
     })
   }
 

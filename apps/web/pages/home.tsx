@@ -11,7 +11,7 @@ const Home = createPage({
   renderComponent: (props) => {
     const {user} = useAuth()
 
-    const currentUser = useCurrentUser()
+    const {user: currentUser} = useCurrentUser()
 
     return (
       <Container>

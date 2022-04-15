@@ -1,7 +1,7 @@
 import {useCurrentUser} from '@modules/core/hooks/use-current-user'
 
 export const useGetTenants = () => {
-  const user = useCurrentUser()
+  const {user} = useCurrentUser()
 
   return (
     user?.profile.organizations?.map((organization) => ({

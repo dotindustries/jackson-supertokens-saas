@@ -1,9 +1,3 @@
-import { useGetOrganizationQuery } from '@app/graphql'
-
-import {
-  useUpdateOrganizationMutation,
-  GetOrganizationQuery,
-} from '@app/graphql'
 
 import * as Yup from 'yup'
 
@@ -28,15 +22,16 @@ import {
   useSnackbar,
 } from '@saas-ui/react'
 import { SettingsPage } from '@modules/core/components/settings-page'
+import {trpc} from '@modules/utils/trpc'
+import {Organization} from '@server/organization'
 
 interface OrganizationDetailsProps {
-  organization?: GetOrganizationQuery['organization'] | null
+  organization?: Organization | null
 }
 
 function OrganizationDetails({ organization }: OrganizationDetailsProps) {
   const snackbar = useSnackbar()
-  const { isLoading, mutateAsync: updateOrganization } =
-    useUpdateOrganizationMutation()
+  const { isLoading, mutateAsync: updateOrganization } = trpc.useMutation(['org.update'])
 
   let form
   if (organization) {
@@ -90,9 +85,9 @@ function OrganizationDetails({ organization }: OrganizationDetailsProps) {
 export function OrganizationSettingsPage() {
   const tenant = useTenant()
 
-  const { data, isLoading, error } = useGetOrganizationQuery({
+  const { data, isLoading, error } = trpc.useQuery(['org.get', {
     slug: tenant,
-  })
+  }])
 
   const organization = data?.organization
 

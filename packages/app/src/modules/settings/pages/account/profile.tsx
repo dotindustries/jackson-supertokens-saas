@@ -1,6 +1,4 @@
 import { useRef, useState } from 'react'
-import { useGetCurrentUserQuery } from '@app/graphql'
-import { useUpdateUserMutation } from '@app/graphql'
 
 import * as Yup from 'yup'
 const schema = Yup.object().shape({
@@ -32,10 +30,12 @@ import {
 import { Section } from '@saas-ui/pro'
 
 import { SettingsPage } from '@modules/core/components/settings-page'
+import {useCurrentUser} from '@modules/core/hooks/use-current-user'
+import {trpc} from '@modules/utils/trpc'
 
 function ProfileDetails({ user }: any) {
   const snackbar = useSnackbar()
-  const { isLoading, mutateAsync: updateUser } = useUpdateUserMutation()
+  const {isLoading, mutateAsync: updateUser} = trpc.useMutation(['user.update'])
 
   return (
     <Section
@@ -120,9 +120,7 @@ function ProfileAvatar({ user }: any) {
 }
 
 export function AccountProfilePage() {
-  const { isLoading, data } = useGetCurrentUserQuery()
-
-  const user = data?.currentUser
+  const { isLoading, user } = useCurrentUser()
 
   return (
     <SettingsPage

@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router'
 import { Section } from '@saas-ui/pro'
 import { UpgradeButton } from '@saas-ui/billing'
-import { useGetOrganizationQuery } from '@app/graphql'
 
 import { Text } from '@chakra-ui/react'
 
@@ -15,6 +14,7 @@ import {
   SubmitButton,
 } from '@saas-ui/react'
 import { SettingsPage } from '@modules/core/components/settings-page'
+import {trpc} from '@modules/utils/trpc'
 
 function BillingPlan({ organization }: any) {
   return (
@@ -77,9 +77,7 @@ export function BillingPage() {
   const router = useRouter()
   const { slug } = router.query
 
-  const { data, isLoading, error } = useGetOrganizationQuery({
-    slug: String(slug),
-  })
+  const {data, isLoading, error} = trpc.useQuery(['org.get', {slug: String(slug)}])
 
   const organization = data?.organization
 

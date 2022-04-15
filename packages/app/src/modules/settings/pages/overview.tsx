@@ -1,6 +1,6 @@
 import { SimpleGrid } from '@chakra-ui/react'
 import { Button, PersonaAvatar, PropertyList, Property } from '@saas-ui/react'
-import { Section } from '@saas-ui/pro'
+import {Section, useTenant} from '@saas-ui/pro'
 
 import { SettingsPage } from '@modules/core/components/settings-page'
 
@@ -14,11 +14,11 @@ import {
   FiShield,
   FiBriefcase,
 } from 'react-icons/fi'
-
-import { useGetOrganizationQuery } from '@app/graphql'
+import {trpc} from '@modules/utils/trpc'
 
 export function SettingsOverviewPage() {
-  const { data, isLoading } = useGetOrganizationQuery()
+  const tenant = useTenant()
+  const { data, isLoading } = trpc.useQuery(['org.get', {slug: tenant}])
 
   return (
     <SettingsPage

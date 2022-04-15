@@ -3,6 +3,14 @@ import {createProtectedRouter} from '@server/createProtectedRouter'
 import * as trpc from '@trpc/server'
 import {Organization} from '@server/organization'
 
+function throwNotImplemented() {
+  throw new trpc.TRPCError({
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'An unexpected error occurred, please try again later.',
+    cause: new Error('not implemented yet')
+  })
+}
+
 export const orgRouter = createProtectedRouter()
   .query('get', {
     input: z.object({
@@ -15,7 +23,9 @@ export const orgRouter = createProtectedRouter()
       let organization: Organization = {
         id: 'someid',
         name: 'dummy-org',
-        slug: input.slug
+        slug: input.slug,
+        plan: '',
+        members: []
       }
       return {organization}
     }
@@ -25,12 +35,42 @@ export const orgRouter = createProtectedRouter()
       name: z.string()
     }),
     async resolve({ctx, input}) {
-      throw new trpc.TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'An unexpected error occurred, please try again later.',
-        cause: new Error('not implemented yet')
-      })
-      // todo create stuff
+      throwNotImplemented()
+      // todo create org
       return {organization: {id: 'id', name: input.name, slug: 'org-slug'}}
+    }
+  })
+  .mutation('inviteMember', {
+    input: z.object({
+      organizationId: z.string(),
+      emails: z.string().array(),
+      role: z.string().nullish(),
+    }),
+    resolve({ctx}) {
+      throwNotImplemented()
+      // todo invite users
+      return false
+    }
+  })
+  .mutation('removeMember', {
+    input: z.object({
+      userId: z.string(),
+      organizationId: z.string()
+    }),
+    resolve({ctx}) {
+      throwNotImplemented()
+      // todo remove members
+      return false
+    }
+  })
+  .mutation('update', {
+    input: z.object({
+      organizationId: z.string(),
+      name: z.string(),
+    }),
+    resolve({ctx}) {
+      throwNotImplemented()
+      // todo update org
+      return false
     }
   })
