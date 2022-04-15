@@ -10,6 +10,7 @@ import {getTrpcBaseUrl} from '@modules/utils/trpc'
 import {samlProduct} from '@app/config/auth/appInfo'
 import {TokenPayload} from '@server/tokenPayload'
 import {Profile} from '@server/profile'
+import {Permission} from '@modules/core/providers/permissions'
 
 export const createSupertokensAuthService = (): AuthProviderProps => {
   return supertokens({
@@ -29,8 +30,11 @@ type SessionRecipe = {
   getUserId: () => Promise<string>
 }
 
-export type LumenUser = User & {
+export type LumenUser = {
+  id: string
+  email: string
   profile: Profile
+  permissions?: Permission[]
 }
 
 const supertokens = (client: {

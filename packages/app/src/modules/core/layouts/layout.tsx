@@ -7,6 +7,9 @@ import {AppLoader} from '@modules/core/components/app-loader'
 import {Hotkeys} from '@modules/core/components/hotkeys'
 import {AppShell, AppShellProps} from '@saas-ui/pro'
 import {HotkeysListOptions} from '@saas-ui/react'
+import PermissionProvider, {Permission} from '@modules/core/providers/permissions'
+import {LumenUser} from '@modules/auth/auth-service'
+import {useCurrentUser} from '@modules/core/hooks/use-current-user'
 
 export const AuthLayout: React.FC = ({children, ...rest}) => {
   return (
@@ -68,11 +71,23 @@ export const Layout: React.FC<LayoutProps> = ({
                                               }) => {
   return (
     <Authenticated>
-      <Hotkeys hotkeys={hotkeys}>
-        <AppShell sidebar={sidebar} {...rest}>
-          {children}
-        </AppShell>
-      </Hotkeys>
+      <Permissions>
+        <Hotkeys hotkeys={hotkeys}>
+          <AppShell sidebar={sidebar} {...rest}>
+            {children}
+          </AppShell>
+        </Hotkeys>
+      </Permissions>
     </Authenticated>
   )
+}
+
+
+export const Permissions: React.FC = ({children}) => {
+  const user = useCurrentUser()
+  return <PermissionProvider fetchPermission={fetchPermission(user)}>{children}</PermissionProvider>
+}
+
+const fetchPermission = (user: LumenUser) => async (permission: Permission) => {
+  return Promise.resolve(user.permissions?.includes(permission) ?? false)
 }

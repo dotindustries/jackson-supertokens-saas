@@ -8,14 +8,16 @@ import {Profile} from 'app/src/server/profile'
 export const jacksonApiSecret = process.env.JACKSON_API_KEY
 // if the app is running within docker, we need the hostnames
 export const jacksonApiUrl = process.env.DOCKER ? 'http://jackson:5225' : 'http://localhost:5225'
-const connectionURI = process.env.DOCKER ? 'http://supertoken:3567' : 'http://localhost:3567'
+const connectionURI = process.env.DOCKER ? 'http://supertoken:3567' : process.env.SUPERTOKENS_API_URI ?? 'http://localhost:3567'
+const apiKey = process.env.SUPERTOKENS_API_KEY
 const jacksonAuthUrl = 'http://localhost:5225'
 
 export const backendConfig = (): TypeInput => {
   return {
     framework: 'express',
     supertokens: {
-      connectionURI
+      connectionURI,
+      apiKey
     },
     appInfo,
     recipeList: [

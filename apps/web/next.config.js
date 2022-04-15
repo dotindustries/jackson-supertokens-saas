@@ -1,8 +1,9 @@
+const withTM = require("next-transpile-modules")(["ttl-localstorage"]);
 const withWorkspaces = require('@saas-ui/next-workspaces')
 const withSvgr = require('next-svgr')
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withWorkspaces({
+const nextConfig = withTM(withWorkspaces({
   workspaces: ['packages'],
   basePath: '../..'
 })(
@@ -33,6 +34,6 @@ const nextConfig = withWorkspaces({
       return config
     }
   })
-)
+))
 
 module.exports = nextConfig

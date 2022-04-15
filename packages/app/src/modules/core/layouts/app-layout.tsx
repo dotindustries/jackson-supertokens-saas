@@ -16,12 +16,12 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({
-  children,
-  publicRoutes = [],
-  isPublic,
-  layout,
-  ...rest
-}) => {
+                                               children,
+                                               publicRoutes = [],
+                                               isPublic,
+                                               layout,
+                                               ...rest
+                                             }) => {
   const router = useRouter()
   const isPublicRoute = publicRoutes.indexOf(router.pathname) !== -1 || isPublic
 
