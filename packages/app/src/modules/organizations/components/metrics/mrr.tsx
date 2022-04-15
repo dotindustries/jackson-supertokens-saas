@@ -5,16 +5,13 @@ import { Card, CardBody } from '@saas-ui/react'
 import { LineChart, LineChartProps, ChartData } from '@saas-ui/charts'
 
 import { format, subDays, eachDayOfInterval } from 'date-fns'
-
-import { useIntl, IntlShape } from 'react-intl'
+import {formatNumber} from '@app/i18n'
 
 // @todo move this to Graphql mock
 const createData = ({
   date = new Date(),
-  intl,
 }: {
   date?: Date
-  intl: IntlShape
 }): ChartData[] => {
   const start = subDays(date, 30)
 
@@ -32,18 +29,13 @@ const createData = ({
       xv: format(date, 'd/L'),
       x: date.getTime(),
       y: r,
-      yv: intl.formatNumber(r, {
-        currency: 'EUR',
-        style: 'currency',
-      }),
+      yv: formatNumber(r, 'EUR'),
     }
   })
 }
 
 export const MRR = () => {
-  const intl = useIntl()
-
-  const data = React.useMemo(() => createData({ intl }), [])
+  const data = React.useMemo(() => createData({}), [])
 
   return (
     <Card title="Monthly recurring revenue">
@@ -51,13 +43,7 @@ export const MRR = () => {
         <LineChart
           data={data}
           name="Revenue"
-          tickFormatter={(value: number) =>
-            intl.formatNumber(value, {
-              currency: 'EUR',
-              style: 'currency',
-              maximumFractionDigits: 0,
-            })
-          }
+          tickFormatter={(value: number) => formatNumber(value, 'EUR', 0)}
           height="290px"
         />
       </CardBody>
