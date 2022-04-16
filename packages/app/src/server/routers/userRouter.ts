@@ -25,7 +25,7 @@ export const userRouter = createProtectedRouter()
       }
       return checkPermission(
         resource,
-        subject || {objectId: ctx.session.getUserId(), objectType: 'dotinc_lumenqa/user'},
+        subject || {objectId: ctx.session.getUserId(), objectType: 'user'},
         permission
       )
     }
