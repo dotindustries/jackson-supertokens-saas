@@ -1,10 +1,7 @@
 import {createContext} from 'react'
 import {LocalStorage} from 'ttl-localstorage'
 import {defaultPermissionBehavior, permissionCacheTTL} from '@app/config/auth'
-
-export type Permission = string
-
-export type Resource = string
+import type {Resource, Permission} from '@server/auth/permissions'
 
 type PermissionContextType = {
   isAllowedTo: (permission: Permission, r?: Resource) => Promise<boolean>

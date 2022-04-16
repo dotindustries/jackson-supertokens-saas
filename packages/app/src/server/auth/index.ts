@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios'
+import axios from 'axios'
 import {jacksonApiSecret, jacksonApiUrl} from '@app/config/auth/backendConfig'
 import {samlProduct} from '@app/config/auth/appInfo'
 

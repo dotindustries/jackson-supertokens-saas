@@ -1,5 +1,6 @@
 import {createProtectedRouter} from '@server/createProtectedRouter'
 import {z} from 'zod'
+import {checkPermission, Resource, Subject} from '@server/auth/permissions'
 
 export const userRouter = createProtectedRouter()
   .mutation('update', {
@@ -15,10 +16,17 @@ export const userRouter = createProtectedRouter()
   .mutation('checkPermission', {
     input: z.object({
       permission: z.string(),
-      resource: z.string().nullish()
+      resource: z.custom<Resource>().nullish(),
+      subject: z.custom<Subject>().nullish()
     }),
-    resolve({ctx}) {
-      // todo implement permission check
-      return false
+    resolve({ctx, input: {resource, permission, subject}}) {
+      if (!resource) {
+        return Promise.resolve(false)
+      }
+      return checkPermission(
+        resource,
+        subject || {objectId: ctx.session.getUserId(), objectType: 'dotinc_lumenqa/user'},
+        permission
+      )
     }
   })

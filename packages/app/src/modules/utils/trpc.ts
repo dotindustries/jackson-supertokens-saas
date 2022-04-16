@@ -10,4 +10,3 @@ export const getTrpcBaseUrl = () => {
 
   return `http://localhost:${process.env.PORT ?? 3000}/api/trpc` // dev SSR should use localhost
 }
-

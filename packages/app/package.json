@@ -14,7 +14,8 @@
     "zod": "^3.14.4",
     "axios": "^0.26.1",
     "uuid": "^8.3.2",
-    "ttl-localstorage": "^2.0.0"
+    "ttl-localstorage": "^2.0.0",
+    "@authzed/authzed-node": "^0.5.0"
   },
   "devDependencies": {
     "@types/uuid": "^8.3.4"
@@ -25,6 +26,7 @@
     "@saas-ui/onboarding": "^0.1.1",
     "@saas-ui/pro": "^0.3.3",
     "@saas-ui/react": "^0.12.7",
-    "react": ">=16.8.6"
+    "react": ">=16.8.6",
+    "@protobuf-ts/runtime": "^2.4.0"
   }
 }
