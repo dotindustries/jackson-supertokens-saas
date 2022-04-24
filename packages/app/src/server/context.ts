@@ -24,7 +24,7 @@ export const createContext = async ({
   return {
     req,
     res,
-    session: (req as unknown as SessionRequest).session! // at this point, we have a session
+    session: (req as unknown as SessionRequest).session // at this point, we have a session
     // TODO add prisma
     // prisma,
   }
