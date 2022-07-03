@@ -44,7 +44,4 @@ export const authPaths: Record<string, any> = {
   },
 }
 
-// Default TTL for permission cache entries
-export const permissionCacheTTL = 300
-
-export const defaultPermissionBehavior: Promise<boolean> = Promise.resolve(false)
+export * from './permissions'

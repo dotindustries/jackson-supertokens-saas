@@ -1,10 +1,14 @@
 import {createContext} from 'react'
 import {LocalStorage} from 'ttl-localstorage'
-import {defaultPermissionBehavior, permissionCacheTTL} from '@app/config/auth'
-import type {Resource, Permission} from '@server/auth/permissions'
+import {defaultPermissionBehavior, Permission, permissionCacheTTL, ResourceType} from '@app/config/auth'
+import { getTrpcBaseUrl, trpc } from '@modules/utils/trpc'
 
 type PermissionContextType = {
-  isAllowedTo: (permission: Permission, r?: Resource) => Promise<boolean>
+  isAllowedTo: <T extends ResourceType>(
+    resource: { objectId: string; objectType: ResourceType },
+    permission: Permission<T>,
+    subject: { objectId: string; objectType: ResourceType } | undefined
+  ) => Promise<boolean>;
 }
 
 // Default behavior for the permission provider context
@@ -16,20 +20,26 @@ const defaultBehavior: PermissionContextType = {
 
 export const PermissionContext = createContext<PermissionContextType>(defaultBehavior)
 
-interface PermissionsProps {
-  fetchPermission: (p: Permission, r?: Resource) => Promise<boolean>
-}
+interface PermissionsProps {}
 
-export const PermissionProvider: React.FC<PermissionsProps> = ({fetchPermission, children}) => {
+export const PermissionProvider: React.FC<PermissionsProps> = ({children}) => {
+  const client = trpc.createClient({ url: getTrpcBaseUrl() })
   const cache = LocalStorage
 
-  // Creates a method that returns cached permissions otherwise fetches from remote then caches and returns
-  const isAllowedTo = async (permission: Permission, resource?: Resource) => {
+  const isAllowedTo = async <T extends ResourceType>(
+    resource: { objectId: string; objectType: ResourceType },
+    permission: Permission<T>,
+    subject: { objectId: string; objectType: ResourceType } | undefined
+  ) => {
     let key = permission + (resource || '')
     if (cache.keyExists(key)) {
-      return cache[key]
+      return cache[key] as boolean
     }
-    const isAllowed = await fetchPermission(permission, resource)
+    const isAllowed = await client.query('public.checkPermission', {
+      resource,
+      permission,
+      subject
+    })
     cache.put(key, isAllowed, permissionCacheTTL)
     return isAllowed
   }
