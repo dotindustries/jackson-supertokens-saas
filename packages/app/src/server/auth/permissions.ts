@@ -3,10 +3,11 @@ import {PartialMessage} from '@protobuf-ts/runtime'
 import {
   CheckPermissionResponse_Permissionship
 } from '@authzed/authzed-node/dist/src/authzedapi/authzed/api/v1/permission_service'
+import { Permission } from '@app/config/auth'
 
 const token = process.env.PERMISSIONS_API_TOKEN
 const prefix = process.env.PERMISSIONS_PREFIX
-export type ObjectType = string & 'user' | 'org' | 'company'
+export type ObjectType = string & 'user' | 'org'
 
 export type SubjectType = ObjectType
 export type ResourceType = ObjectType
@@ -17,11 +18,18 @@ if (!token) {
 
 const client = v1.NewClient(token)
 
-export type Permission = string
-export type Resource = { objectType: ResourceType } & PartialMessage<v1.ObjectReference>
-export type Subject = { objectType: SubjectType } & PartialMessage<v1.ObjectReference>
+export type ObjectReference = v1.ObjectReference;
+export type Resource<T extends ResourceType> = {
+  objectType: T;
+} & ObjectReference;
+export type Subject<T extends ResourceType> = {
+  objectType: T;
+} & PartialMessage<ObjectReference>;
 
-export const checkPermission = (res: Resource, sub: Subject, permission: string) => {
+export const checkPermission = <
+T extends ResourceType,
+ST extends ResourceType
+>(res: Resource<T>, sub: Subject<ST>, permission: Permission<T>) => {
   return new Promise<boolean>((resolve, reject) => {
     const resource = v1.ObjectReference.create({
       objectId: res.objectId,
@@ -38,7 +46,14 @@ export const checkPermission = (res: Resource, sub: Subject, permission: string)
     const checkPermissionRequest = v1.CheckPermissionRequest.create({
       resource,
       permission,
-      subject
+      subject,
+      // constrain permission check
+      // consistency: {
+      //   requirement: {
+      //     atLeastAsFresh: zedToken, // for having time constraint
+      //     fullyConsistent: true // or fully consistent if not using zedToken
+      //   }
+      // }
     })
 
     client.checkPermission(checkPermissionRequest, (err, response) => {
