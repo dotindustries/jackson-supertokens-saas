@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {jacksonApiSecret, jacksonApiUrl} from '@app/config/auth/backendConfig'
-import {samlProduct} from '@app/config/auth/appInfo'
+import {samlProduct} from '@app/config/src/auth/appInfo'
 
 export class OrganizationNotFound extends Error {
   constructor(m: string) {
