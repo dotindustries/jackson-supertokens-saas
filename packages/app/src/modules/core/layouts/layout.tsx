@@ -74,36 +74,13 @@ export const Layout: React.FC<LayoutProps> = ({
                                               }) => {
   return (
     <Authenticated>
-      <Permissions>
+      <PermissionProvider>
         <Hotkeys hotkeys={hotkeys}>
           <AppShell sidebar={sidebar} {...rest}>
             {children}
           </AppShell>
         </Hotkeys>
-      </Permissions>
+      </PermissionProvider>
     </Authenticated>
   )
-}
-
-
-export const Permissions: React.FC = ({children}) => {
-  const {user} = useCurrentUser()
-  const {mutateAsync: checkPermissions} = trpc.useMutation(['user.checkPermission'])
-  return <PermissionProvider fetchPermission={fetchPermission(user, checkPermissions)}>{children}</PermissionProvider>
-}
-
-type CheckPermissionsInput = inferMutationInput<'user.checkPermission'>
-
-const fetchPermission = (
-  user: LumenUser,
-  checkPermissions: (input: CheckPermissionsInput) => Promise<boolean>
-) => async (permission: Permission, resource?: Resource) => {
-  // having permissions locally
-  if (user.permissions) {
-    return user.permissions.includes(permission)
-  }
-  return await checkPermissions({
-    permission,
-    resource
-  })
 }

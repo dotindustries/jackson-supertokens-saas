@@ -3,7 +3,6 @@
   "version": "1.0.1",
   "main": "src/index.ts",
   "dependencies": {
-    "@app/config": "*",
     "@app/i18n": "*",
     "@ui/theme": "*",
     "yup": "^0.32.11",

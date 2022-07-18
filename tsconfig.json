@@ -21,7 +21,10 @@
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
     "incremental": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "paths": {
+      "@app/config/*": ["packages/app-config/src/*"]
+    }
   },
   "include": ["packages", "scripts", "tooling"],
   "exclude": [

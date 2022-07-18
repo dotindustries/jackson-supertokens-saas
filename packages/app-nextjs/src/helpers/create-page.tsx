@@ -1,20 +1,20 @@
 import React from 'react'
 import Head from 'next/head'
 import {Restricted} from 'app/src/modules/auth/components/Restricted'
-import {Permission} from 'app/src/modules/core/providers/permissions'
+import { PermissionRequirement } from 'app/src/modules/core/auth/permissions'
 
 interface CreatePageProps {
   title?: string
   layout?: React.ReactNode
   isPublic?: boolean
   renderComponent: React.FC
-  permission?: Permission
+  permission?: PermissionRequirement;
 }
 
 interface PageFC extends React.FC {
   layout?: React.ReactNode
   isPublic?: boolean
-  permission?: Permission
+  permission?: PermissionRequirement
 }
 
 /**
